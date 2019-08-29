@@ -34,36 +34,36 @@
     </div>
 
     <div class="video-list-wrapper full no-scrollbar">
-    <div class="video-list full no-scrollbar">
-      <div :key="video.id" v-for="(video, index) in otherVids" class="thumbnail">
-        <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
-          <div v-if="activeOthrVideo(index)">
-            <video
-            :src="video.videoURL"
-            width="280"
-            height="180"
-            controls
-            allowfullscreen
-            autoplay>
-            </video>
-          </div>
-          <div class="video-wrapper" v-else>
-            <img :id="video.videoURL" src="//s3-us-west-2.amazonaws.com/s.cdpn.io/3174/poster.png" width="280" height="180" />
+      <div class="video-list full no-scrollbar">
+        <div :key="video.id" v-for="(video, index) in otherVids" class="thumbnail">
+          <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
+            <!-- <div v-if="activeOthrVideo(index)">
+              <video
+                :src="video.videoURL"
+                width="280"
+                height="180"
+                controls
+                allowfullscreen
+                autoplay
+              ></video>
+            </div>-->
+            <!-- <div class="video-wrapper"> -->
+            <img :id="video.videoURL" :src="video.thumbnail" width="280" height="180" />
             <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">
               <circle cx="100" cy="100" r="90" />
               <polygon points="70, 55 70, 145 145, 100" fill="#fff" />
             </svg>
+            <!-- </div> -->
           </div>
-        </div>
-        <div class="thumbnail-info">
-          <h3>{{video.title}}</h3>
-          <p>{{video.creator}}</p>
-          <p class="thumbnail-views">{{video.views}} Views</p>
+          <div class="thumbnail-info">
+            <h3>{{video.title}}</h3>
+            <p>{{video.creator}}</p>
+            <p class="thumbnail-views">{{video.views}} Views</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
-    </div>
 </template>
 
 <script>
@@ -86,7 +86,7 @@ export default {
       return this.activeVideos[index];
     },
     activeOthrVideo(index) {
-      return this.activeOthrVideos[index];
+      return this.activeOthrVideos[index] && this.otherVids[index].videoURL;
     },
     chooseVideo(e, index) {
       this.activeVideos = new Array(this.videos.length).fill(false);

@@ -44,31 +44,7 @@ module.exports = {
   modules: [
     '@nuxtjs/vuetify',
     '@nuxtjs/eslint-module',
-    '@nuxtjs/axios',
-    ['nuxt-fire',
-      {
-        // Required:
-        config: {
-          development: {
-            apiKey: "AIzaSyCsXOQxUtVnUkmxWmFGon3ktIZyY7QR4D0",
-            authDomain: "betachannel-eb8fb.firebaseapp.com",
-            databaseURL: "https://betachannel-eb8fb.firebaseio.com",
-            projectId: "betachannel-eb8fb",
-            storageBucket: "betachannel-eb8fb.appspot.com",
-            messagingSenderId: "868969921084",
-            appId: "1:868969921084:web:376032dec8158bc7"
-          },
-          production: {
-            apiKey: "AIzaSyCsXOQxUtVnUkmxWmFGon3ktIZyY7QR4D0",
-            authDomain: "betachannel-eb8fb.firebaseapp.com",
-            databaseURL: "https://betachannel-eb8fb.firebaseio.com",
-            projectId: "betachannel-eb8fb",
-            storageBucket: "betachannel-eb8fb.appspot.com",
-            messagingSenderId: "868969921084",
-            appId: "1:868969921084:web:376032dec8158bc7"
-          }
-        }
-      }]
+    '@nuxtjs/axios'
   ],
   /*
   ** vuetify module configuration
@@ -97,5 +73,6 @@ module.exports = {
   },
   env: {
     fbAPIKey: 'AIzaSyCsXOQxUtVnUkmxWmFGon3ktIZyY7QR4D0'
-  }
+  },
+  workbox: { cachingExtensions: '@/plugins/workbox-range-request.js' }
 }

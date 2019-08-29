@@ -1,14 +1,11 @@
-import firebase from '~/plugins/firebase';
-import Cookie from "js-cookie";
 import axios from 'axios'
+import Cookie from "js-cookie";
+import firebase from '~/plugins/firebase';
 const $axios = axios.create();
-
-export interface RootState {
-}
 
 export const strict = false;
 
-export const state = (): RootState => ({
+export const state = () => ({
     loadedVideos: [],
     token: null
 })
@@ -26,7 +23,7 @@ export const mutations = {
 };
 
 export const actions = {
-    nuxtServerInit(vuexContext, context) {
+    nuxtServerInit(vuexContext) {
         const videosQuery = firebase.firestore().collection('videos').get();
         return videosQuery.then(res => {
             const videos = res.docs.map(doc => doc.data());

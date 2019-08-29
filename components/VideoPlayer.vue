@@ -1,11 +1,6 @@
 <template>
   <div class="video-player">
     <div class="video-list-wrapper full no-scrollbar background-color">
-      <!-- <div class="paddles">
-        <button class="left-paddle paddle hidden">
-          <v-icon color="white">arrow_back</v-icon>
-        </button>
-      </div>-->
       <div class="video-list full no-scrollbar background-color">
         <div :key="video.id" v-for="(video, index) in sponsoredVids" class="thumbnail">
           <div class="video-wrapper" @click="chooseVideo($event, index)">
@@ -36,22 +31,29 @@
           </div>
         </div>
       </div>
-      <!-- <div class="paddles">
-        <button class="left-paddle paddle hidden">
-          <v-icon color="white">arrow_forward</v-icon>
-        </button>
-      </div>-->
     </div>
+
+    <div class="video-list-wrapper full no-scrollbar">
     <div class="video-list full no-scrollbar">
-      <div :key="video.id" v-for="video in videos" class="thumbnail">
-        <div class="video-wrapper">
-          <video
+      <div :key="video.id" v-for="(video, index) in otherVids" class="thumbnail">
+        <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
+          <div v-if="activeOthrVideo(index)">
+            <video
             :src="video.videoURL"
-            width="280"
-            height="250"
-            poster="//s3-us-west-2.amazonaws.com/s.cdpn.io/3174/poster.png"
+            width="350"
+            height="230"
+            controls
             allowfullscreen
-          ></video>
+            autoplay>
+            </video>
+          </div>
+          <div v-else>
+            <img :id="video.videoURL" src="//s3-us-west-2.amazonaws.com/s.cdpn.io/3174/poster.png" width="350" height="230" />
+            <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">
+              <circle cx="100" cy="100" r="90" />
+              <polygon points="70, 55 70, 145 145, 100" fill="#fff" />
+            </svg>
+          </div>
         </div>
         <div class="thumbnail-info">
           <h3>{{video.title}}</h3>
@@ -61,6 +63,7 @@
       </div>
     </div>
   </div>
+    </div>
 </template>
 
 <script>
@@ -68,7 +71,8 @@ export default {
   name: "VideoPlayer",
   data: function() {
     return {
-      activeVideos: []
+      activeVideos: [],
+      activeOthrVideos: []
     };
   },
   props: {
@@ -81,23 +85,34 @@ export default {
     activeVideo(index) {
       return this.activeVideos[index];
     },
+    activeOthrVideo(index) {
+      return this.activeOthrVideos[index];
+    },
     chooseVideo(e, index) {
       this.activeVideos = new Array(this.videos.length).fill(false);
       this.activeVideos[index] = !this.activeVideos[index];
-      console.log(this.activeVideos);
+    },
+    chooseOthrVideo(e, index) {
+      this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
+      this.activeOthrVideos[index] = !this.activeOthrVideos[index];
     },
     addLike() {
       this.currVid.likes += 1;
     }
   },
   mounted() {
-    console.log(this.videos);
     this.activeVideos = new Array(this.videos.length).fill(false);
+    this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
   },
   computed: {
     sponsoredVids: function() {
       return this.videos.filter(function(vid) {
         return vid.orgId === "betachannel";
+      });
+    },
+    otherVids: function() {
+      return this.videos.filter(function(vid) {
+        return vid.orgId !== "betachannel";
       });
     }
   }

@@ -1,5 +1,7 @@
 import firebase from '~/plugins/firebase';
 import Cookie from "js-cookie";
+import axios from 'axios'
+const $axios = axios.create();
 
 export interface RootState {
 }
@@ -47,8 +49,8 @@ export const actions = {
                 "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" +
                 process.env.fbAPIKey;
         }
-        return this.$axios
-            .$post(authUrl, {
+        return $axios
+            .post(authUrl, {
                 email: authData.email,
                 password: authData.password,
                 returnSecureToken: true

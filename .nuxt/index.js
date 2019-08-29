@@ -11,9 +11,15 @@ import { createStore } from './store.js'
 
 /* Plugins */
 
+<<<<<<< Updated upstream
 import nuxt_plugin_vuetify_3c7e4dc0 from 'nuxt_plugin_vuetify_3c7e4dc0' // Source: ./vuetify.js (mode: 'all')
 import nuxt_plugin_nuxtfire_eca1e6e4 from 'nuxt_plugin_nuxtfire_eca1e6e4' // Source: ./nuxt-fire.js (mode: 'all')
 import nuxt_plugin_axios_3e06cad0 from 'nuxt_plugin_axios_3e06cad0' // Source: ./axios.js (mode: 'all')
+=======
+import nuxt_plugin_vuetify_1b504efe from 'nuxt_plugin_vuetify_1b504efe' // Source: ./vuetify.js (mode: 'all')
+import nuxt_plugin_nuxtfire_2f50eb0f from 'nuxt_plugin_nuxtfire_2f50eb0f' // Source: ./nuxt-fire.js (mode: 'all')
+import nuxt_plugin_axios_7d8be199 from 'nuxt_plugin_axios_7d8be199' // Source: ./axios.js (mode: 'all')
+>>>>>>> Stashed changes
 import nuxt_plugin_firebase_34d6f690 from 'nuxt_plugin_firebase_34d6f690' // Source: ../plugins/firebase.ts (mode: 'all')
 import nuxt_plugin_button_70815805 from 'nuxt_plugin_button_70815805' // Source: ../plugins/button.ts (mode: 'all')
 
@@ -155,6 +161,7 @@ async function createApp(ssrContext) {
 
   // Plugin execution
 
+<<<<<<< Updated upstream
   if (typeof nuxt_plugin_vuetify_3c7e4dc0 === 'function') {
     await nuxt_plugin_vuetify_3c7e4dc0(app.context, inject)
   }
@@ -165,6 +172,18 @@ async function createApp(ssrContext) {
 
   if (typeof nuxt_plugin_axios_3e06cad0 === 'function') {
     await nuxt_plugin_axios_3e06cad0(app.context, inject)
+=======
+  if (typeof nuxt_plugin_vuetify_1b504efe === 'function') {
+    await nuxt_plugin_vuetify_1b504efe(app.context, inject)
+  }
+
+  if (typeof nuxt_plugin_nuxtfire_2f50eb0f === 'function') {
+    await nuxt_plugin_nuxtfire_2f50eb0f(app.context, inject)
+  }
+
+  if (typeof nuxt_plugin_axios_7d8be199 === 'function') {
+    await nuxt_plugin_axios_7d8be199(app.context, inject)
+>>>>>>> Stashed changes
   }
 
   if (typeof nuxt_plugin_firebase_34d6f690 === 'function') {

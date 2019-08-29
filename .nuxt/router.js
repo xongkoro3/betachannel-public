@@ -2,9 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import { interopDefault } from './utils'
 
-const _63fe9bce = () => interopDefault(import('../pages/upload.vue' /* webpackChunkName: "pages/upload" */))
-const _94ba6210 = () => interopDefault(import('../pages/admin/auth/index.vue' /* webpackChunkName: "pages/admin/auth/index" */))
-const _dd22d7d6 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
+const _b4e32486 = () => interopDefault(import('../pages/upload.vue' /* webpackChunkName: "pages/upload" */))
+const _47e44227 = () => interopDefault(import('../pages/admin/auth/index.vue' /* webpackChunkName: "pages/admin/auth/index" */))
+const _38b54846 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
 
 Vue.use(Router)
 
@@ -82,15 +82,15 @@ export function createRouter() {
 
     routes: [{
       path: "/upload",
-      component: _63fe9bce,
+      component: _b4e32486,
       name: "upload"
     }, {
       path: "/admin/auth",
-      component: _94ba6210,
+      component: _47e44227,
       name: "admin-auth"
     }, {
       path: "/",
-      component: _dd22d7d6,
+      component: _38b54846,
       name: "index"
     }],
 

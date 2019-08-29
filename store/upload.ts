@@ -1,5 +1,5 @@
 import { ActionTree, MutationTree, GetterTree } from "vuex";
-import { RootState } from ".";
+// import { RootState } from ".";
 import firebase from '~/plugins/firebase';
 
 export interface UploadState {
@@ -42,7 +42,7 @@ export const mutations: MutationTree<UploadState> = {
   }
 }
 
-export const getters: GetterTree<UploadState, RootState> = {
+export const getters: GetterTree<UploadState, UploadState> = {
   uploadProgress(state) {
     if (!state.latestSnapshot || !state.isUploading) {
       return 0;
@@ -60,7 +60,7 @@ export const getters: GetterTree<UploadState, RootState> = {
   }
 }
 
-export const actions: ActionTree<UploadState, RootState> = {
+export const actions: ActionTree<UploadState, UploadState> = {
   uploadVideo({ commit, state }, payload: { channelId: string, file: File, metadata?: firebase.storage.UploadMetadata }) {
     commit('setUploadTask', { task: null });
     commit('setUploadError', { error: null });
@@ -87,11 +87,11 @@ export const actions: ActionTree<UploadState, RootState> = {
     getVideoURL().then(url => {
       console.log('this is url', url);
       firebase.firestore().collection('videos').doc(randomKey).set({
-        likes: 2,
+        likes: 0,
         thumbnail: 'https://i.ytimg.com/vi/Pf6oI0j_zpk/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLAvJvk4k_UNB9nst4pFP-txM1TLZA',
         title: 'test',
         videoURL: url,
-        views: 10
+        views: 0
       }).catch(e => console.log(e));
     }).catch(e => console.log(e));
 

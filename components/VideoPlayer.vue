@@ -8,16 +8,16 @@
               <div v-if="video.orgId='betachannel'">
                 <video
                   :src="video.videoURL"
-                  width="350"
-                  height="230"
+                  width="280"
+                  height="180"
                   allowfullscreen
                   controls
                   autoplay
                 ></video>
               </div>
             </div>
-            <div v-else>
-              <img :id="video.videoURL" :src="video.thumbnail" width="350" height="230" />
+            <div class="video-wrapper" v-else>
+              <img :id="video.videoURL" :src="video.thumbnail" width="280" height="180" />
               <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">
                 <circle cx="100" cy="100" r="90" />
                 <polygon points="70, 55 70, 145 145, 100" fill="#fff" />
@@ -40,15 +40,15 @@
           <div v-if="activeOthrVideo(index)">
             <video
             :src="video.videoURL"
-            width="350"
-            height="230"
+            width="280"
+            height="180"
             controls
             allowfullscreen
             autoplay>
             </video>
           </div>
-          <div v-else>
-            <img :id="video.videoURL" src="//s3-us-west-2.amazonaws.com/s.cdpn.io/3174/poster.png" width="350" height="230" />
+          <div class="video-wrapper" v-else>
+            <img :id="video.videoURL" src="//s3-us-west-2.amazonaws.com/s.cdpn.io/3174/poster.png" width="280" height="180" />
             <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">
               <circle cx="100" cy="100" r="90" />
               <polygon points="70, 55 70, 145 145, 100" fill="#fff" />

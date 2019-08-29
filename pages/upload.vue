@@ -9,6 +9,9 @@
         <!-- <h2>Uploaded {{ uploadedFiles.length }} video successfully.</h2> -->
         <h2>Uploaded video successfully.</h2>
         <p>
+          <a href="javascript:void(0)" @click="goHome()">Home Page</a>
+        </p>
+        <p>
           <a href="javascript:void(0)" @click="reset()">Upload again</a>
         </p>
         <ul class="list-unstyled">
@@ -21,6 +24,9 @@
       <div v-else-if="isFailed">
         <h2>Upload failed.</h2>
         <p>
+          <a href="javascript:void(0)" @click="goHome()">Home Page</a>
+        </p>
+        <p>
           <a href="javascript:void(0)" @click="reset()">Try again</a>
         </p>
         <pre>{{ uploadError }}</pre>
@@ -29,7 +35,6 @@
         <div class="dropbox">
           <input
             type="file"
-            multiple
             :name="uploadFieldName"
             :disabled="isSaving"
             @change="save($event.target.files[0])"
@@ -109,9 +114,11 @@ export default {
   },
   methods: {
     reset() {
-      // reset form to initial state
-      this.uploadedFiles = [];
-      this.uploadError = null;
+      this.$router.push("/upload");
+      window.location.reload(true);
+    },
+    gohome() {
+      this.$router.push("/");
     },
     save(file, metadata) {
       this.$store.dispatch("upload/uploadVideo", {
@@ -120,9 +127,6 @@ export default {
         metadata
       });
     }
-  },
-  mounted() {
-    this.reset();
   }
 };
 </script>

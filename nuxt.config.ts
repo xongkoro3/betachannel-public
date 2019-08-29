@@ -36,7 +36,7 @@ module.exports = {
   */
   plugins: [
     '~/plugins/firebase.ts',
-    '~/plugins/button.ts'
+    '~/plugins/button.js'
   ],
   /*
   ** Nuxt.js modules

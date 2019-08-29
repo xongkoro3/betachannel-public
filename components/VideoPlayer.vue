@@ -37,7 +37,7 @@
       <div class="video-list full no-scrollbar">
         <div :key="video.id" v-for="(video, index) in otherVids" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
-            <!-- <div v-if="activeOthrVideo(index)">
+            <div v-if="activeOthrVideo(index)">
               <video
                 :src="video.videoURL"
                 width="280"
@@ -46,14 +46,14 @@
                 allowfullscreen
                 autoplay
               ></video>
-            </div>-->
-            <!-- <div class="video-wrapper"> -->
-            <img :id="video.videoURL" :src="video.thumbnail" width="280" height="180" />
-            <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">
-              <circle cx="100" cy="100" r="90" />
-              <polygon points="70, 55 70, 145 145, 100" fill="#fff" />
-            </svg>
-            <!-- </div> -->
+            </div>
+            <div class="video-wrapper" v-else>
+              <img :id="video.videoURL" :src="video.thumbnail" width="280" height="180" />
+              <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">
+                <circle cx="100" cy="100" r="90" />
+                <polygon points="70, 55 70, 145 145, 100" fill="#fff" />
+              </svg>
+            </div>
           </div>
           <div class="thumbnail-info">
             <h3>{{video.title}}</h3>

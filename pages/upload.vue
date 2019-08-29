@@ -117,7 +117,7 @@ export default {
       this.$router.push("/upload");
       window.location.reload(true);
     },
-    gohome() {
+    goHome() {
       this.$router.push("/");
     },
     save(file, metadata) {

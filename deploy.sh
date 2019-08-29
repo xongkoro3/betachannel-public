@@ -4,4 +4,4 @@ git reset --hard origin/master
 yarn install
 yarn build
 pm2 delete all || true
-pm2 start yarn -start --name "app"
+pm2 start "yarn run start" --name "app"

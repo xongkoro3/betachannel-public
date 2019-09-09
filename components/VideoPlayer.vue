@@ -1,6 +1,11 @@
 <template>
   <div class="video-player">
     <div class="video-list-wrapper full no-scrollbar background-color">
+          <div @click="backArrow($event)" class="paddles">
+        <button class="left-paddle paddle hidden">
+          <v-icon color="white">arrow_back</v-icon>
+        </button>
+      </div>
       <div class="video-list full no-scrollbar background-color">
         <div :key="video.id" v-for="(video, index) in sponsoredVids" class="thumbnail">
           <div class="video-wrapper" @click="chooseVideo($event, index)">
@@ -30,6 +35,11 @@
             <p class="thumbnail-views">{{video.views}} Views</p>
           </div>
         </div>
+      </div>
+      <div class="paddles">
+        <button class="left-paddle paddle hidden">
+          <v-icon color="white">arrow_forward</v-icon>
+        </button>
       </div>
     </div>
 
@@ -98,11 +108,16 @@ export default {
     },
     addLike() {
       this.currVid.likes += 1;
+    },
+    backArrow(e) {
+      console.log(e);
+      alert('clicked');
     }
   },
   mounted() {
     this.activeVideos = new Array(this.videos.length).fill(false);
     this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
+    console.log('h: ', this.otherVids)
   },
   computed: {
     sponsoredVids: function() {

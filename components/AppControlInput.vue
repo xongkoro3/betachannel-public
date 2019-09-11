@@ -1,5 +1,5 @@
 <template>
-  <div class="input-control input-control-email" v-if="type == 'email'">
+  <div v-if="type == 'email' && login == false" class="input-control input-control-email">
     <label>
       <slot />
     </label>
@@ -10,7 +10,6 @@
       :value="value"
       @input="$emit('input', $event.target.value)"
     />
-
     <textarea
       v-if="controlType === 'textarea'"
       rows="10"
@@ -18,7 +17,7 @@
       @input="$emit('input', $event.target.value)"
     ></textarea>
   </div>
-  <div class="input-control" v-else>
+  <div v-else class="input-control">
     <label>
       <slot />
     </label>
@@ -28,7 +27,6 @@
       :value="value"
       @input="$emit('input', $event.target.value)"
     />
-
     <textarea
       v-if="controlType === 'textarea'"
       rows="10"
@@ -42,6 +40,10 @@
 export default {
   name: "AppControlInput",
   props: {
+    login: {
+      type: Boolean,
+      default: true
+    },
     type: {
       type: String,
       default: ""
@@ -85,7 +87,7 @@ export default {
 }
 
 .input-control-email {
-  width: 50% !important; 
+  width: 50% !important;
   display: inline-block;
 }
 </style>

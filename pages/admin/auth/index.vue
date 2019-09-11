@@ -2,11 +2,14 @@
   <div class="admin-auth-page">
     <div class="auth-container">
       <form @submit.prevent="onSubmit">
-        <AppControlInput v-model="url">Website URL</AppControlInput>
-        <AppControlInput v-model="org">Organization</AppControlInput>
-        <div>
-          <AppControlInput type="email" v-model="email">E-Mail Address</AppControlInput>
+        <AppControlInput v-if="isLogin == false" v-model="url">Website URL</AppControlInput>
+        <AppControlInput v-if="isLogin == false" v-model="org">Organization</AppControlInput>
+        <div v-if="isLogin == false">
+          <AppControlInput type="email" v-bind:login="isLogin" v-model="email">E-Mail Address</AppControlInput>
           <span style="display: inline-block">{{url|trimDomainName}}</span>
+        </div>
+        <div v-else>
+          <AppControlInput type="email" v-bind:login="isLogin" v-model="email">E-Mail Address</AppControlInput>
         </div>
         <AppControlInput type="password" v-model="password">Password</AppControlInput>
         <AppButton type="submit">{{ isLogin ? 'Login' : 'Sign Up' }}</AppButton>

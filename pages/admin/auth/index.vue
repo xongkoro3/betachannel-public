@@ -2,7 +2,12 @@
   <div class="admin-auth-page">
     <div class="auth-container">
       <form @submit.prevent="onSubmit">
-        <AppControlInput type="email" v-model="email">E-Mail Address</AppControlInput>
+        <AppControlInput v-model="url">Website URL</AppControlInput>
+        <AppControlInput v-model="org">Organization</AppControlInput>
+        <div>
+          <AppControlInput type="email" v-model="email">E-Mail Address</AppControlInput>
+          <span style="display: inline-block">{{url|trimDomainName}}</span>
+        </div>
         <AppControlInput type="password" v-model="password">Password</AppControlInput>
         <AppButton type="submit">{{ isLogin ? 'Login' : 'Sign Up' }}</AppButton>
         <AppButton
@@ -24,8 +29,16 @@ export default {
     return {
       isLogin: true,
       email: "",
-      password: ""
+      password: "",
+      url: "",
+      org: ""
     };
+  },
+  filters: {
+    trimDomainName: function(val) {
+      val = val.replace("www.", "@");
+      return val;
+    }
   },
   methods: {
     onSubmit() {

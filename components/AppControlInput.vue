@@ -1,23 +1,5 @@
 <template>
-  <div v-if="type == 'email' && login == false" class="input-control input-control-email">
-    <label>
-      <slot />
-    </label>
-    <input
-      style="text-align: right;"
-      v-if="controlType === 'input'"
-      v-bind="$attrs"
-      :value="value"
-      @input="$emit('input', $event.target.value)"
-    />
-    <textarea
-      v-if="controlType === 'textarea'"
-      rows="10"
-      :value="value"
-      @input="$emit('input', $event.target.value)"
-    ></textarea>
-  </div>
-  <div v-else class="input-control">
+  <div class="input-control" v-bind:class="{ emailformat: name == 'email' && login == false }">
     <label>
       <slot />
     </label>
@@ -44,7 +26,7 @@ export default {
       type: Boolean,
       default: true
     },
-    type: {
+    name: {
       type: String,
       default: ""
     },
@@ -86,8 +68,12 @@ export default {
   outline: none;
 }
 
-.input-control-email {
+.emailformat {
   width: 50% !important;
   display: inline-block;
+}
+
+.emailformat > input{
+  text-align: right;
 }
 </style>

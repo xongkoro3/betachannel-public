@@ -37,15 +37,15 @@ export const actions = {
         vuexContext.commit('setVideos', videos);
     },
 
-    authenticateUser(vuexContext, authData) {
-        let authUrl =
+    signinUser(vuexContext, authData) {
+        const authUrl =
             "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" +
             process.env.fbAPIKey;
-        if (!authData.isLogin) {
-            authUrl =
-                "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" +
-                process.env.fbAPIKey;
-        }
+        // if (!authData.isLogin) {
+        //     authUrl =
+        //         "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" +
+        //         process.env.fbAPIKey;
+        // }
         return $axios
             .post(authUrl, {
                 email: authData.email,
@@ -67,7 +67,29 @@ export const actions = {
             })
             .catch(e => console.log(e));
     },
-
+    emailUser(vuexContext, authData) {
+        const actionCodeSettings = {
+            url: 'http://localhost:3000/',
+            handleCodeInApp: true
+            // iOS: {
+            //   bundleId: 'com.example.ios'
+            // },
+            // android: {
+            //   packageName: 'com.example.android',
+            //   installApp: true,
+            //   minimumVersion: '12'
+            // },
+            // dynamicLinkDomain: 'example.page.link'
+        };
+        console.log(authData.email);
+        firebase.auth().sendSignInLinkToEmail(authData.email, actionCodeSettings)
+        .then(function() {
+          window.localStorage.setItem('emailForSignIn', authData.email);
+        })
+        .catch(function(error) {
+            console.log('error in emailing user', error);
+        });
+    },
     initAuth(vuexContext, req) {
         let token;
         let expirationDate;

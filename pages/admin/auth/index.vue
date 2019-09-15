@@ -5,7 +5,7 @@
         <AppControlInput v-if="isLogin == false" v-model="url">Website URL</AppControlInput>
         <AppControlInput v-if="isLogin == false" v-model="org">Organization</AppControlInput>
         <div v-if="isLogin == false">
-          <AppControlInput type="email" name="email" v-bind:login="isLogin" v-model="email">E-Mail Address</AppControlInput>
+          <AppControlInput type="text" name="email" v-bind:login="isLogin" v-model="email">E-Mail Address</AppControlInput>
           <span style="display: inline-block">{{url|trimDomainName}}</span>
         </div>
         <div v-else>

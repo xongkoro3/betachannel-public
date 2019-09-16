@@ -62,7 +62,7 @@ export default {
             password: this.password
           })
           .then(() => {
-            this.$router.push("/upload");
+            this.$router.push("/confirm");
           });
       }
     }

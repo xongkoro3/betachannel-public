@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import { interopDefault } from './utils'
 
+const _2d77b4da = () => interopDefault(import('../pages/confirm.vue' /* webpackChunkName: "pages/confirm" */))
 const _5b67f87e = () => interopDefault(import('../pages/upload.vue' /* webpackChunkName: "pages/upload" */))
 const _6977e0b0 = () => interopDefault(import('../pages/admin/auth/index.vue' /* webpackChunkName: "pages/admin/auth/index" */))
 const _2e0ee165 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
@@ -81,6 +82,10 @@ export function createRouter() {
     scrollBehavior,
 
     routes: [{
+      path: "/confirm",
+      component: _2d77b4da,
+      name: "confirm"
+    }, {
       path: "/upload",
       component: _5b67f87e,
       name: "upload"

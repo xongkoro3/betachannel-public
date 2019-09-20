@@ -55,23 +55,25 @@ export default {
             this.$router.push("/upload");
           });
       } else {
-        this.$store.dispatch("registerUser", {
-            email: this.email,
-            password: this.password
-        })
-        .then((res) => {
-          console.log(res)
-        });
-
         this.$store
-          .dispatch("emailUser", {
-            email: this.email + this.$options.filters.trimDomainName(this.url),
-            password: this.password,
-            org: this.org
+          .dispatch("registerUser", {
+              email: this.email + this.$options.filters.trimDomainName(this.url),
+              password: this.password,
+              org: this.org
           })
-          .then(() => {
+          .then((res) => {
             this.$router.push("/confirm");
+            console.log(res)
           });
+        // this.$store
+        //   .dispatch("emailUser", {
+        //     email: this.email + this.$options.filters.trimDomainName(this.url),
+        //     password: this.password,
+        //     org: this.org
+        //   })
+        //   .then(() => {
+        //     this.$router.push("/confirm");
+        //   });
       }
     }
   }

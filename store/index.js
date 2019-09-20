@@ -7,10 +7,14 @@ export const strict = false;
 
 export const state = () => ({
     loadedVideos: [],
-    token: null
+    token: null,
+    user: null
 })
 
 export const mutations = {
+    setUser(state, user) {
+        state.user = user;
+    },
     setVideos(state, videos) {
         state.loadedVideos = videos
     },
@@ -38,20 +42,28 @@ export const actions = {
     },
 
     registerUser(vuexContext, authData) {
-        const authUrl = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" +
-        process.env.fbAPIKey;
-
-        return $axios
-            .post(authUrl, {
-                email: authData.email,
-                password: authData.password
+        firebase.auth().createUserWithEmailAndPassword(
+            authData.email,
+            authData.password).then(() => {
+                window.localStorage.setItem('emailForSignIn', authData.email);
+                window.localStorage.setItem('orgName', authData.org);
+                const user = firebase.auth().currentUser;
+                vuexContext.commit('setUser', user);
+                const actionCodeSettings = {
+                    url: 'http://localhost:3000/?email=' + authData.email,
+                    handleCodeInApp: true
+                };
+                user.sendEmailVerification(actionCodeSettings).then(function() {
+                // Email sent.
+                }).catch(function(error) {
+                // An error happened.
+                    console.log('email verification err:', error);
+                });
             })
-            .then(result => {
-                console.log(result)
-            })
-            .catch(e => {
-                console.log(e)
-            });
+            .catch(function(error) {
+                console.log(error);
+            }
+        );
     },
     signinUser(vuexContext, authData) {
         const authUrl =
@@ -64,6 +76,7 @@ export const actions = {
                 returnSecureToken: true
             })
             .then(result => {
+                console.log('res', result);
                 vuexContext.commit("setToken", result.idToken);
                 localStorage.setItem("token", result.idToken);
                 localStorage.setItem(
@@ -78,38 +91,28 @@ export const actions = {
             })
             .catch(e => console.log(e));
     },
-    emailUser(vuexContext, authData) {
-        const actionCodeSettings = {
-            url: 'https://localhost:3000/',
-            handleCodeInApp: true
-        };
-        console.log(authData.email);
-        firebase.auth().sendSignInLinkToEmail(authData.email, actionCodeSettings)
-        .then(function() {
-          window.localStorage.setItem('emailForSignIn', authData.email);
-          window.localStorage.setItem('orgName', authData.org);
-        })
-        .catch(function(error) {
-            console.log('error in emailing user', error);
-        });
-    },
-    // TODO:
-    // 1) Find a place to call verifyEmail
-    // 2) Send req to firebase to store user under org
-    verifyEmail(vuexContext) {
-        if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            if (!email) {
-              email = window.prompt('Please provide your email for confirmation');
-            }
-            firebase.auth().signInWithEmailLink(email, window.location.href)
-              .then(function(result) {
+    verifyEmail() {
+        const email = window.localStorage.getItem('emailForSignIn');
+        firebase.auth().signInWithEmailLink(email, window.location.href)
+            .then(function(result) {
+                console.log('signin with email res:', result);
+                const uid = result.user.uid;
+                const org = window.localStorage.getItem('orgName');
+                firebase.firestore().collection('organizations')
+                    .add({
+                        logoUrl: '',
+                        name: org,
+                        users: [uid]
+                    }).then(function(docRef) {
+                        console.log("Org created with ID: ", docRef.id);
+                    }).catch(function(error) {
+                        console.error("Error creating org: ", error);
+                    });
                 window.localStorage.removeItem('emailForSignIn');
-              })
-              .catch(function(error) {
-                    console.log('error in verifying email', error);
-            });
-        }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
     },
     initAuth(vuexContext, req) {
         let token;

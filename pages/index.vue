@@ -20,6 +20,11 @@ export default {
   components: {
     VideoPlayer
   },
+  mounted() {
+    if(this.$route.query.email) {
+      this.$store.dispatch('verifyEmail');
+    };
+  },
   computed: {
     loadedVideos() {
       return this.$store.getters.loadedVideos;

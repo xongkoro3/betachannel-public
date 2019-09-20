@@ -37,15 +37,26 @@ export const actions = {
         vuexContext.commit('setVideos', videos);
     },
 
+    registerUser(vuexContext, authData) {
+        const authUrl = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" +
+        process.env.fbAPIKey;
+
+        return $axios
+            .post(authUrl, {
+                email: authData.email,
+                password: authData.password
+            })
+            .then(result => {
+                console.log(result)
+            })
+            .catch(e => {
+                console.log(e)
+            });
+    },
     signinUser(vuexContext, authData) {
         const authUrl =
             "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" +
             process.env.fbAPIKey;
-        // if (!authData.isLogin) {
-        //     authUrl =
-        //         "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" +
-        //         process.env.fbAPIKey;
-        // }
         return $axios
             .post(authUrl, {
                 email: authData.email,
@@ -69,26 +80,33 @@ export const actions = {
     },
     emailUser(vuexContext, authData) {
         const actionCodeSettings = {
-            url: 'http://localhost:3000/',
+            url: 'https://localhost:3000/',
             handleCodeInApp: true
-            // iOS: {
-            //   bundleId: 'com.example.ios'
-            // },
-            // android: {
-            //   packageName: 'com.example.android',
-            //   installApp: true,
-            //   minimumVersion: '12'
-            // },
-            // dynamicLinkDomain: 'example.page.link'
         };
         console.log(authData.email);
         firebase.auth().sendSignInLinkToEmail(authData.email, actionCodeSettings)
         .then(function() {
           window.localStorage.setItem('emailForSignIn', authData.email);
+          window.localStorage.setItem('orgName', authData.org);
         })
         .catch(function(error) {
             console.log('error in emailing user', error);
         });
+    },
+    verifyEmail(vuexContext) {
+        if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+            let email = window.localStorage.getItem('emailForSignIn');
+            if (!email) {
+              email = window.prompt('Please provide your email for confirmation');
+            }
+            firebase.auth().signInWithEmailLink(email, window.location.href)
+              .then(function(result) {
+                window.localStorage.removeItem('emailForSignIn');
+              })
+              .catch(function(error) {
+                    console.log('error in verifying email', error);
+            });
+        }
     },
     initAuth(vuexContext, req) {
         let token;

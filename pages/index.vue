@@ -1,6 +1,6 @@
 <template>
   <v-layout column justify-center align-center>
-    <video-player :activeVideo="loadedVideos[0]" :videos="loadedVideos"></video-player>
+    <video-player :videos="loadedVideos"></video-player>
   </v-layout>
 </template>
 

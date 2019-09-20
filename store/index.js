@@ -93,6 +93,9 @@ export const actions = {
             console.log('error in emailing user', error);
         });
     },
+    // TODO:
+    // 1) Find a place to call verifyEmail
+    // 2) Send req to firebase to store user under org
     verifyEmail(vuexContext) {
         if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
             let email = window.localStorage.getItem('emailForSignIn');

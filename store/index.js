@@ -21,6 +21,9 @@ export const mutations = {
     setToken(state, token) {
         state.token = token
     },
+    clearUser(state) {
+        state.currentUser = null
+    },
     clearToken(state) {
         state.token = null
     }
@@ -45,12 +48,11 @@ export const actions = {
         firebase.auth().createUserWithEmailAndPassword(
             authData.email,
             authData.password).then(() => {
-                window.localStorage.setItem('emailForSignIn', authData.email);
-                window.localStorage.setItem('orgName', authData.org);
                 const user = firebase.auth().currentUser;
                 vuexContext.commit('setUser', user);
+                window.localStorage.setItem('org', authData.org);
                 const actionCodeSettings = {
-                    url: 'http://localhost:3000/?email=' + authData.email,
+                    url: 'http://localhost:3000/upload',
                     handleCodeInApp: true
                 };
                 user.sendEmailVerification(actionCodeSettings).then(function() {
@@ -75,8 +77,30 @@ export const actions = {
                 password: authData.password,
                 returnSecureToken: true
             })
-            .then(result => {
-                console.log('res', result);
+            .then((result) => {
+                const user = firebase.auth().currentUser;
+                vuexContext.commit('setUser', user);
+                console.log('user: ', user)
+                if (user.emailVerified && !user.displayName) {
+                    const org = window.localStorage.getItem('org');
+
+                    user.updateProfile({
+                        displayName: org
+                    }).catch((e) => {
+                        console.log('error when adding org to user', e);
+                    })
+                    firebase.firestore().collection('organizations')
+                        .add({
+                            logoUrl: '',
+                            name: org,
+                            users: [user.uid]
+                        }).then(function(docRef) {
+                            console.log("Org created with ID: ", docRef.id);
+                        }).catch(function(error) {
+                            console.error("Error creating org: ", error);
+                        });
+                    window.localStorage.removeItem('org');
+                }
                 vuexContext.commit("setToken", result.idToken);
                 localStorage.setItem("token", result.idToken);
                 localStorage.setItem(
@@ -91,29 +115,30 @@ export const actions = {
             })
             .catch(e => console.log(e));
     },
-    verifyEmail() {
-        const email = window.localStorage.getItem('emailForSignIn');
-        firebase.auth().signInWithEmailLink(email, window.location.href)
-            .then(function(result) {
-                console.log('signin with email res:', result);
-                const uid = result.user.uid;
-                const org = window.localStorage.getItem('orgName');
-                firebase.firestore().collection('organizations')
-                    .add({
-                        logoUrl: '',
-                        name: org,
-                        users: [uid]
-                    }).then(function(docRef) {
-                        console.log("Org created with ID: ", docRef.id);
-                    }).catch(function(error) {
-                        console.error("Error creating org: ", error);
-                    });
-                window.localStorage.removeItem('emailForSignIn');
-            })
-            .catch(function(err) {
-                console.log(err);
-            })
-    },
+    // verifyEmail() {
+    //     console.log('sup');
+    //     const email = window.localStorage.getItem('emailForSignIn');
+    //     firebase.auth().signInWithEmailLink(email, window.location.href)
+    //         .then(function(result) {
+    //             console.log('signin with email res:', result);
+    //             const uid = result.user.uid;
+    //             const org = window.localStorage.getItem('orgName');
+    //             firebase.firestore().collection('organizations')
+    //                 .add({
+    //                     logoUrl: '',
+    //                     name: org,
+    //                     users: [uid]
+    //                 }).then(function(docRef) {
+    //                     console.log("Org created with ID: ", docRef.id);
+    //                 }).catch(function(error) {
+    //                     console.error("Error creating org: ", error);
+    //                 });
+    //             window.localStorage.removeItem('emailForSignIn');
+    //         })
+    //         .catch(function(err) {
+    //             console.log(err);
+    //         })
+    // },
     initAuth(vuexContext, req) {
         let token;
         let expirationDate;
@@ -145,6 +170,7 @@ export const actions = {
     },
     logout(vuexContext) {
         vuexContext.commit("clearToken");
+        vuexContext.commit("clearUser");
         Cookie.remove("jwt");
         Cookie.remove("expirationDate");
         if (process.client) {
@@ -160,5 +186,9 @@ export const getters = {
     },
     isAuthenticated(state) {
         return state.token != null;
+    },
+    getCurrentUser(state) {
+        return state.user;
     }
+
 }

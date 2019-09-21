@@ -115,30 +115,6 @@ export const actions = {
             })
             .catch(e => console.log(e));
     },
-    // verifyEmail() {
-    //     console.log('sup');
-    //     const email = window.localStorage.getItem('emailForSignIn');
-    //     firebase.auth().signInWithEmailLink(email, window.location.href)
-    //         .then(function(result) {
-    //             console.log('signin with email res:', result);
-    //             const uid = result.user.uid;
-    //             const org = window.localStorage.getItem('orgName');
-    //             firebase.firestore().collection('organizations')
-    //                 .add({
-    //                     logoUrl: '',
-    //                     name: org,
-    //                     users: [uid]
-    //                 }).then(function(docRef) {
-    //                     console.log("Org created with ID: ", docRef.id);
-    //                 }).catch(function(error) {
-    //                     console.error("Error creating org: ", error);
-    //                 });
-    //             window.localStorage.removeItem('emailForSignIn');
-    //         })
-    //         .catch(function(err) {
-    //             console.log(err);
-    //         })
-    // },
     initAuth(vuexContext, req) {
         let token;
         let expirationDate;

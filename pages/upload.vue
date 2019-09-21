@@ -33,6 +33,7 @@
       </div>
       <form enctype="multipart/form-data" novalidate v-else>
         <div class="dropbox">
+          <div style="text-align: left !important;">
           <input
             type="file"
             :name="uploadFieldName"
@@ -41,6 +42,7 @@
             accept="image/*|video/*"
             class="input-file"
           />
+          </div>
           <p>
             Drag your file(s) here to begin
             <br />or click to browse

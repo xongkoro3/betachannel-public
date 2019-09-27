@@ -35,7 +35,12 @@
         <br>
         <form enctype="multipart/form-data" novalidate>
           <div class="thumbnail">
-            <!-- <v-file-input label="File input"></v-file-input> -->
+            <input
+            type="file"
+            id="thumb"
+            name="thumb"
+            @change="setThumb($event.target.files[0])"
+       accept="image/png, image/jpeg"/>
           </div>
           <div class="title">
             Title:
@@ -107,7 +112,8 @@ export default {
       uploadError: null,
       currentStatus: null,
       uploadFieldName: "photos",
-      title: ""
+      title: "",
+      thumb: null
     };
   },
   computed: {
@@ -137,9 +143,13 @@ export default {
       this.$store.dispatch("upload/uploadVideo", {
         channelId: "test",
         title: this.title,
+        thumb: this.thumb,
         file,
         metadata
       });
+    },
+    setThumb(file) {
+      this.thumb = file
     }
   }
 };

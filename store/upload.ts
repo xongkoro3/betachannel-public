@@ -61,7 +61,7 @@ export const getters: GetterTree<UploadState, UploadState> = {
 }
 
 export const actions: ActionTree<UploadState, UploadState> = {
-  uploadVideo({ commit, state }, payload: { channelId: string, title: string, file: File, metadata?: firebase.storage.UploadMetadata }) {
+  uploadVideo({ commit, state }, payload: { channelId: string, title: string, thumb: File, file: File, metadata?: firebase.storage.UploadMetadata }) {
     commit('setUploadTask', { task: null });
     commit('setUploadError', { error: null });
     commit('updateUploading', { isUploading: true });
@@ -72,26 +72,42 @@ export const actions: ActionTree<UploadState, UploadState> = {
       .child(payload.channelId)
       .child(randomKey);
     const task = ref.put(payload.file, payload.metadata)
-    console.log('sup');
 
     commit('setUploadTask', { task });
 
-    var getVideoURL = function () {
-      return task.then(() => {
-        return ref.getDownloadURL()
-          .then(url => Promise.resolve(url))
+    const thumbRef =  firebase.storage()
+      .ref('channel')
+      .child('images')
+      .child(randomKey);
+    
+    const thumbTask = thumbRef.put(payload.thumb);
+
+    var getThumbURL = new Promise(function(resolve, reject) {
+      thumbTask.then(() => {
+        thumbRef.getDownloadURL()
+          .then(url => resolve(url))
           .catch(e => console.log(e))
       });
-    }
+    });
 
-    getVideoURL().then(url => {
-      console.log('this is url', url);
+
+    var getVideoURL = new Promise(function(resolve, reject) {
+       task.then(() => {
+        ref.getDownloadURL()
+          .then(url => resolve(url))
+          .catch(e => console.log(e))
+      });
+    });
+
+
+    Promise.all([getThumbURL, getVideoURL]).then(function(urls) {
+      console.log('this is url', urls);
       firebase.firestore().collection('videos').doc(randomKey).set({
         id: randomKey,
         likes: 0,
-        thumbnail: 'https://i.ytimg.com/vi/Pf6oI0j_zpk/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLAvJvk4k_UNB9nst4pFP-txM1TLZA',
+        thumbnail: urls[0],
         title: payload.title,
-        videoURL: url,
+        videoURL: urls[1],
         views: 0
       }).catch(e => console.log(e));
     }).catch(e => console.log(e));

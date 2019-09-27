@@ -46,8 +46,8 @@ export const actions = {
 
     registerUser(vuexContext, authData) {
         firebase.auth().createUserWithEmailAndPassword(
-            authData.email,
-            authData.password).then(() => {
+                authData.email,
+                authData.password).then(() => {
                 const user = firebase.auth().currentUser;
                 vuexContext.commit('setUser', user);
                 window.localStorage.setItem('org', authData.org);
@@ -55,21 +55,20 @@ export const actions = {
                     url: 'http://localhost:3000/upload',
                     handleCodeInApp: true
                 };
-                user.sendEmailVerification(actionCodeSettings).then(function() {
-                // Email sent.
-                }).catch(function(error) {
-                // An error happened.
+                user.sendEmailVerification(actionCodeSettings).then(function () {
+                    // Email sent.
+                }).catch(function (error) {
+                    // An error happened.
                     console.log('email verification err:', error);
                 });
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(error);
-            }
-        );
+            });
     },
     signinUser(vuexContext, authData) {
         const authUrl =
-            "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" +
+            "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" +
             process.env.fbAPIKey;
         return $axios
             .post(authUrl, {
@@ -78,42 +77,43 @@ export const actions = {
                 returnSecureToken: true
             })
             .then((result) => {
-                const user = firebase.auth().currentUser;
-                vuexContext.commit('setUser', user);
-                console.log('user: ', user)
-                if (user.emailVerified && !user.displayName) {
-                    const org = window.localStorage.getItem('org');
-
-                    user.updateProfile({
-                        displayName: org
-                    }).catch((e) => {
-                        console.log('error when adding org to user', e);
-                    })
-                    firebase.firestore().collection('organizations')
-                        .add({
-                            logoUrl: '',
-                            name: org,
-                            users: [user.uid]
-                        }).then(function(docRef) {
-                            console.log("Org created with ID: ", docRef.id);
-                        }).catch(function(error) {
-                            console.error("Error creating org: ", error);
-                        });
-                    window.localStorage.removeItem('org');
-                }
-                vuexContext.commit("setToken", result.idToken);
-                localStorage.setItem("token", result.idToken);
-                localStorage.setItem(
-                    "tokenExpiration",
-                    new Date().getTime() + String(Number.parseInt(result.expiresIn) * 1000)
-                );
-                Cookie.set("jwt", result.idToken);
-                Cookie.set(
-                    "expirationDate",
-                    new Date().getTime() + String(Number.parseInt(result.expiresIn) * 1000)
-                );
-            })
-            .catch(e => console.log(e));
+                console.log(result);
+                // const user = firebase.auth().currentUser;
+                // if (user) {
+                    // vuexContext.commit('setUser', user);
+                    // console.log('user: ', user)
+                    // if (user.emailVerified && !user.displayName) {
+                    //     const org = window.localStorage.getItem('org');
+                    //     user.updateProfile({
+                    //         displayName: org
+                    //     }).catch((e) => {
+                    //         console.log('error when adding org to user', e);
+                    //     })
+                    //     firebase.firestore().collection('organizations')
+                    //         .add({
+                    //             logoUrl: '',
+                    //             name: org,
+                    //             users: [user.uid]
+                    //         }).then(function (docRef) {
+                    //             console.log("Org created with ID: ", docRef.id);
+                    //         }).catch(function (error) {
+                    //             console.error("Error creating org: ", error);
+                    //         });
+                    //     window.localStorage.removeItem('org');
+                    // }
+                    vuexContext.commit("setToken", result.idToken);
+                    localStorage.setItem("token", result.idToken);
+                    localStorage.setItem(
+                        "tokenExpiration",
+                        new Date().getTime() + String(Number.parseInt(result.expiresIn) * 1000)
+                    );
+                    Cookie.set("jwt", result.idToken);
+                    Cookie.set(
+                        "expirationDate",
+                        new Date().getTime() + String(Number.parseInt(result.expiresIn) * 1000)
+                    );
+                // }
+            }).catch(e => console.log('error in signing in', e));
     },
     initAuth(vuexContext, req) {
         let token;
@@ -145,14 +145,16 @@ export const actions = {
         vuexContext.commit("setToken", token);
     },
     logout(vuexContext) {
-        vuexContext.commit("clearToken");
-        vuexContext.commit("clearUser");
-        Cookie.remove("jwt");
-        Cookie.remove("expirationDate");
-        if (process.client) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("tokenExpiration");
-        }
+        firebase.auth().signOut().then(function () {
+            vuexContext.commit("clearToken");
+            vuexContext.commit("clearUser");
+            Cookie.remove("jwt");
+            Cookie.remove("expirationDate");
+            if (process.client) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("tokenExpiration");
+            }
+        });
     }
 };
 

@@ -61,7 +61,7 @@ export const getters: GetterTree<UploadState, UploadState> = {
 }
 
 export const actions: ActionTree<UploadState, UploadState> = {
-  uploadVideo({ commit, state }, payload: { channelId: string, file: File, metadata?: firebase.storage.UploadMetadata }) {
+  uploadVideo({ commit, state }, payload: { channelId: string, title: string, file: File, metadata?: firebase.storage.UploadMetadata }) {
     commit('setUploadTask', { task: null });
     commit('setUploadError', { error: null });
     commit('updateUploading', { isUploading: true });
@@ -87,9 +87,10 @@ export const actions: ActionTree<UploadState, UploadState> = {
     getVideoURL().then(url => {
       console.log('this is url', url);
       firebase.firestore().collection('videos').doc(randomKey).set({
+        id: randomKey,
         likes: 0,
         thumbnail: 'https://i.ytimg.com/vi/Pf6oI0j_zpk/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLAvJvk4k_UNB9nst4pFP-txM1TLZA',
-        title: 'test',
+        title: payload.title,
         videoURL: url,
         views: 0
       }).catch(e => console.log(e));

@@ -31,24 +31,34 @@
         </p>
         <pre>{{ uploadError }}</pre>
       </div>
-      <form enctype="multipart/form-data" novalidate v-else>
-        <div class="dropbox">
-          <div style="text-align: left !important;">
-          <input
-            type="file"
-            :name="uploadFieldName"
-            :disabled="isSaving"
-            @change="save($event.target.files[0])"
-            accept="image/*|video/*"
-            class="input-file"
-          />
+      <div v-else>
+        <br>
+        <form enctype="multipart/form-data" novalidate>
+          <div class="thumbnail">
+            <!-- <v-file-input label="File input"></v-file-input> -->
           </div>
-          <p>
-            Drag your file(s) here to begin
-            <br />or click to browse
-          </p>
-        </div>
-      </form>
+          <div class="title">
+            Title:
+            <input type="text" name="title" v-model="title">
+          </div>
+          <div class="dropbox">
+            <div style="text-align: left !important;">
+              <input
+                type="file"
+                :name="uploadFieldName"
+                :disabled="isSaving"
+                @change="save($event.target.files[0])"
+                accept="image/*|video/*"
+                class="input-file"
+              />
+            </div>
+            <p>
+              Drag your video here to begin
+              <br />or click to browse
+            </p>
+          </div>
+        </form>
+      </div>
     </v-flex>
   </v-layout>
 </template>
@@ -96,7 +106,8 @@ export default {
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
-      uploadFieldName: "photos"
+      uploadFieldName: "photos",
+      title: ""
     };
   },
   computed: {
@@ -125,6 +136,7 @@ export default {
     save(file, metadata) {
       this.$store.dispatch("upload/uploadVideo", {
         channelId: "test",
+        title: this.title,
         file,
         metadata
       });

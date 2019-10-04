@@ -43,9 +43,9 @@
       </div>
     </div>
 
-    <div class="video-list-wrapper full no-scrollbar">
-      <div class="video-list full no-scrollbar">
-        <div :key="video.id" v-for="(video, index) in otherVids" class="thumbnail">
+    <div :key="channel" v-for="channel in channels" class="video-list-wrapper full no-scrollbar">
+      <template v-for="(video, index) in otherVids">
+        <div :key="video.id" v-if="video.orgId == channel" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
             <div v-if="activeOthrVideo(index)">
               <video
@@ -65,15 +65,16 @@
               </svg>
             </div>
           </div>
-          <div class="thumbnail-info">
-            <h3>{{video.title}}</h3>
-            <p>{{video.creator}}</p>
-            <p class="thumbnail-views">{{video.views}} Views</p>
+            <div class="thumbnail-info">
+              <h3>{{video.title}}</h3>
+              <p>{{video.creator}}</p>
+              <p class="thumbnail-views">{{video.views}} Views</p>
+            </div>
           </div>
+        </template>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -122,14 +123,39 @@ export default {
   },
   computed: {
     sponsoredVids: function() {
-      return this.videos.filter(function(vid) {
+      const vids = this.videos.filter(function(vid) {
         return vid.orgId === "betachannel";
       });
+      vids.sort(function(a, b) {
+          const keyA = (a.updatedAt || {}).seconds;
+          const keyB = (b.updatedAt || {}).seconds;
+          if (keyA < keyB) return 1;
+          if (keyA > keyB) return -1;
+          return 0;
+      });
+      return vids;
     },
     otherVids: function() {
-      return this.videos.filter(function(vid) {
+      const othrVidsObjArr = this.videos.filter(function(vid) {
         return vid.orgId !== "betachannel";
       });
+      othrVidsObjArr.sort(function(a, b) {
+          const keyA = (a.updatedAt || {}).seconds;
+          const keyB = (b.updatedAt || {}).seconds;
+          if (keyA < keyB) return 1;
+          if (keyA > keyB) return -1;
+          return 0;
+      });
+      return othrVidsObjArr;
+    },
+    channels: function() {
+      const channels = [];
+      this.otherVids.forEach(element => {
+        if (!channels.includes(element.orgId)) {
+          channels.push(element.orgId);
+        }
+      });
+      return channels;
     }
   }
 };

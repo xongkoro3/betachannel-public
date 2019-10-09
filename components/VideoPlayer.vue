@@ -1,7 +1,7 @@
 <template>
   <div class="video-player">
     <div class="video-list-wrapper full no-scrollbar background-color">
-          <div @click="backArrow($event)" class="paddles">
+      <div @click="backArrow($event)" class="paddles">
         <button class="left-paddle paddle hidden">
           <v-icon color="white">arrow_back</v-icon>
         </button>
@@ -44,6 +44,7 @@
     </div>
 
     <div :key="channel" v-for="channel in channels" class="video-list-wrapper full no-scrollbar">
+      <span>{{ channel }}</span>
       <template v-for="(video, index) in otherVids">
         <div :key="video.id" v-if="video.orgId == channel" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
@@ -65,16 +66,15 @@
               </svg>
             </div>
           </div>
-            <div class="thumbnail-info">
-              <h3>{{video.title}}</h3>
-              <p>{{video.creator}}</p>
-              <p class="thumbnail-views">{{video.views}} Views</p>
-            </div>
+          <div class="thumbnail-info">
+            <h3>{{video.title}}</h3>
+            <p>{{video.creator}}</p>
+            <p class="thumbnail-views">{{video.views}} Views</p>
           </div>
-        </template>
         </div>
-      </div>
+      </template>
     </div>
+  </div>
 </template>
 
 <script>
@@ -102,7 +102,7 @@ export default {
     chooseVideo(e, index) {
       this.activeVideos = new Array(this.videos.length).fill(false);
       this.activeVideos[index] = !this.activeVideos[index];
-      console.log('s[index]', this.sponsoredVids[index]);
+      console.log("s[index]", this.sponsoredVids[index]);
     },
     chooseOthrVideo(e, index) {
       this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
@@ -113,13 +113,13 @@ export default {
     },
     backArrow(e) {
       console.log(e);
-      alert('clicked');
+      alert("clicked");
     }
   },
   mounted() {
     this.activeVideos = new Array(this.videos.length).fill(false);
     this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
-    console.log('h: ', this.otherVids)
+    console.log("h: ", this.otherVids);
   },
   computed: {
     sponsoredVids: function() {
@@ -127,11 +127,11 @@ export default {
         return vid.orgId === "betachannel";
       });
       vids.sort(function(a, b) {
-          const keyA = (a.updatedAt || {}).seconds;
-          const keyB = (b.updatedAt || {}).seconds;
-          if (keyA < keyB) return 1;
-          if (keyA > keyB) return -1;
-          return 0;
+        const keyA = (a.updatedAt || {}).seconds;
+        const keyB = (b.updatedAt || {}).seconds;
+        if (keyA < keyB) return 1;
+        if (keyA > keyB) return -1;
+        return 0;
       });
       return vids;
     },
@@ -140,11 +140,11 @@ export default {
         return vid.orgId !== "betachannel";
       });
       othrVidsObjArr.sort(function(a, b) {
-          const keyA = (a.updatedAt || {}).seconds;
-          const keyB = (b.updatedAt || {}).seconds;
-          if (keyA < keyB) return 1;
-          if (keyA > keyB) return -1;
-          return 0;
+        const keyA = (a.updatedAt || {}).seconds;
+        const keyB = (b.updatedAt || {}).seconds;
+        if (keyA < keyB) return 1;
+        if (keyA > keyB) return -1;
+        return 0;
       });
       return othrVidsObjArr;
     },

@@ -141,7 +141,7 @@ export default {
     },
     save(file, metadata) {
       this.$store.dispatch("upload/uploadVideo", {
-        channelId: "test",
+        channelId: "test", //TODO
         title: this.title,
         thumb: this.thumb,
         file,

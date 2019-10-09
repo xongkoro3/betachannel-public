@@ -102,11 +102,14 @@ export const actions: ActionTree<UploadState, UploadState> = {
 
     Promise.all([getThumbURL, getVideoURL]).then(function(urls) {
       console.log('this is url', urls);
+      const currDate = firebase.firestore.Timestamp.fromDate(new Date());
       firebase.firestore().collection('videos').doc(randomKey).set({
         id: randomKey,
+        orgId: payload.channelId,
         likes: 0,
         thumbnail: urls[0],
         title: payload.title,
+        updatedAt: currDate,
         videoURL: urls[1],
         views: 0
       }).catch(e => console.log(e));

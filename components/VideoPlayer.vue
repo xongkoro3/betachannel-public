@@ -313,7 +313,15 @@ button {
   display: none;
 }
 
+@media only screen and (max-width: 600px) {
+  .paddles {
+    display: none;
+  }
+}
+
 .paddles {
   vertical-align: middle;
 }
+
+
 </style>

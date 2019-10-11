@@ -44,7 +44,7 @@
     </div>
 
     <div :key="channel" v-for="channel in channels" class="video-list-wrapper full no-scrollbar">
-      <span style="margin-right:-100px !important;">{{ channel }}</span>
+      <span class="orgTitle">{{ channel }}</span>
       <template v-for="(video, index) in otherVids">
         <div :key="video.id" v-if="video.orgName == channel" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
@@ -316,5 +316,12 @@ button {
 
 .paddles {
   vertical-align: middle;
+}
+
+.orgTitle {
+  margin-left: 30px;
+  margin-right: -100px !important;
+  margin-top: 10px;
+  position: absolute !important;
 }
 </style>

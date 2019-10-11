@@ -1,6 +1,11 @@
 <template>
   <div class="video-player">
     <div class="video-list-wrapper full no-scrollbar background-color">
+      <div @click="backArrow($event)" class="paddles">
+        <button class="left-paddle paddle hidden">
+          <v-icon color="white">arrow_back</v-icon>
+        </button>
+      </div>
       <div class="video-list full no-scrollbar background-color">
         <div :key="video.id" v-for="(video, index) in sponsoredVids" class="thumbnail">
           <div class="video-wrapper" @click="chooseVideo($event, index)">
@@ -26,16 +31,22 @@
           </div>
           <div class="thumbnail-info">
             <h3>{{video.title}}</h3>
-            <p>{{video.creator}}</p>
+            <p>{{video.updatedAt}}</p>
             <p class="thumbnail-views">{{video.views}} Views</p>
           </div>
         </div>
       </div>
+      <div class="paddles">
+        <button class="left-paddle paddle hidden">
+          <v-icon color="white">arrow_forward</v-icon>
+        </button>
+      </div>
     </div>
 
-    <div class="video-list-wrapper full no-scrollbar">
-      <div class="video-list full no-scrollbar">
-        <div :key="video.id" v-for="(video, index) in otherVids" class="thumbnail">
+    <div :key="channel" v-for="channel in channels" class="video-list-wrapper full no-scrollbar">
+      <span>{{ channel }}</span>
+      <template v-for="(video, index) in otherVids">
+        <div :key="video.id" v-if="video.orgName == channel" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
             <div v-if="activeOthrVideo(index)">
               <video
@@ -57,11 +68,11 @@
           </div>
           <div class="thumbnail-info">
             <h3>{{video.title}}</h3>
-            <p>{{video.creator}}</p>
+            <p>{{ }}</p>
             <p class="thumbnail-views">{{video.views}} Views</p>
           </div>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -91,6 +102,7 @@ export default {
     chooseVideo(e, index) {
       this.activeVideos = new Array(this.videos.length).fill(false);
       this.activeVideos[index] = !this.activeVideos[index];
+      console.log("s[index]", this.sponsoredVids[index]);
     },
     chooseOthrVideo(e, index) {
       this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
@@ -98,22 +110,54 @@ export default {
     },
     addLike() {
       this.currVid.likes += 1;
+    },
+    backArrow(e) {
+      console.log(e);
+      alert("clicked");
     }
   },
   mounted() {
     this.activeVideos = new Array(this.videos.length).fill(false);
     this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
+    console.log("h: ", this.otherVids);
   },
   computed: {
     sponsoredVids: function() {
-      return this.videos.filter(function(vid) {
+      const vids = this.videos.filter(function(vid) {
         return vid.orgId === "betachannel";
       });
+      vids.sort(function(a, b) {
+        const keyA = (a.updatedAt || {}).seconds;
+        const keyB = (b.updatedAt || {}).seconds;
+        if (keyA < keyB) return 1;
+        if (keyA > keyB) return -1;
+        return 0;
+      });
+      return vids;
     },
     otherVids: function() {
-      return this.videos.filter(function(vid) {
+      const othrVidsObjArr = this.videos.filter(function(vid) {
         return vid.orgId !== "betachannel";
       });
+      othrVidsObjArr.sort(function(a, b) {
+        const keyA = (a.updatedAt || {}).seconds;
+        const keyB = (b.updatedAt || {}).seconds;
+        if (keyA < keyB) return 1;
+        if (keyA > keyB) return -1;
+        return 0;
+      });
+      return othrVidsObjArr;
+    },
+    channels: function() {
+      const channels = [];
+      this.otherVids.forEach(element => {
+        console.log(typeof (element.updatedAt.seconds))
+        // element.updatedAt = new Date(element.updatedAt.nanoseconds).toLocaleString();
+        if (!channels.includes(element.orgName)) {
+          channels.push(element.orgName);
+        }
+      });
+      return channels;
     }
   }
 };
@@ -269,7 +313,15 @@ button {
   display: none;
 }
 
+@media only screen and (max-width: 600px) {
+  .paddles {
+    display: none;
+  }
+}
+
 .paddles {
   vertical-align: middle;
 }
+
+
 </style>

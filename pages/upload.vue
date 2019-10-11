@@ -31,22 +31,39 @@
         </p>
         <pre>{{ uploadError }}</pre>
       </div>
-      <form enctype="multipart/form-data" novalidate v-else>
-        <div class="dropbox">
-          <input
+      <div v-else>
+        <br>
+        <form enctype="multipart/form-data" novalidate>
+          <div class="thumbnail">
+            <input
             type="file"
-            :name="uploadFieldName"
-            :disabled="isSaving"
-            @change="save($event.target.files[0])"
-            accept="image/*|video/*"
-            class="input-file"
-          />
-          <p>
-            Drag your file(s) here to begin
-            <br />or click to browse
-          </p>
-        </div>
-      </form>
+            id="thumb"
+            name="thumb"
+            @change="setThumb($event.target.files[0])"
+       accept="image/png, image/jpeg"/>
+          </div>
+          <div class="title">
+            Title:
+            <input type="text" name="title" v-model="title">
+          </div>
+          <div class="dropbox">
+            <div style="text-align: left !important;">
+              <input
+                type="file"
+                :name="uploadFieldName"
+                :disabled="isSaving"
+                @change="save($event.target.files[0])"
+                accept="image/*|video/*"
+                class="input-file"
+              />
+            </div>
+            <p>
+              Drag your video here to begin
+              <br />or click to browse
+            </p>
+          </div>
+        </form>
+      </div>
     </v-flex>
   </v-layout>
 </template>
@@ -88,13 +105,15 @@ import { mapGetters } from "vuex";
 import firebase from "~/plugins/firebase";
 
 export default {
-  middleware: ["check-auth", "auth"],
+  middleware: ["auth"],
   data() {
     return {
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
-      uploadFieldName: "photos"
+      uploadFieldName: "photos",
+      title: "",
+      thumb: null
     };
   },
   computed: {
@@ -110,6 +129,9 @@ export default {
     },
     isFailed() {
       return this.state === firebase.storage.TaskState.ERROR;
+    },
+    currentUser() {
+      return this.$store.getters.getCurrentUser;
     }
   },
   methods: {
@@ -122,11 +144,19 @@ export default {
     },
     save(file, metadata) {
       this.$store.dispatch("upload/uploadVideo", {
-        channelId: "test",
+        user: this.currentUser,
+        title: this.title,
+        thumb: this.thumb,
         file,
         metadata
       });
+    },
+    setThumb(file) {
+      this.thumb = file
     }
+  },
+  mounted() {
+    console.log(this.currentUser);
   }
 };
 </script>

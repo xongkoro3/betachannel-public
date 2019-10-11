@@ -61,7 +61,7 @@ export const getters: GetterTree<UploadState, UploadState> = {
 }
 
 export const actions: ActionTree<UploadState, UploadState> = {
-  uploadVideo({ commit, state }, payload: { channelId: string, file: File, metadata?: firebase.storage.UploadMetadata }) {
+  uploadVideo({ commit, state }, payload: { user: any, title: string, thumb: File, file: File, metadata?: firebase.storage.UploadMetadata }) {
     commit('setUploadTask', { task: null });
     commit('setUploadError', { error: null });
     commit('updateUploading', { isUploading: true });
@@ -69,28 +69,60 @@ export const actions: ActionTree<UploadState, UploadState> = {
     const randomKey = firebase.database().ref('channel').push().ref.key as string;
     const ref = firebase.storage()
       .ref('channel')
-      .child(payload.channelId)
+      .child(payload.user.uid)
       .child(randomKey);
     const task = ref.put(payload.file, payload.metadata)
-    console.log('sup');
 
     commit('setUploadTask', { task });
 
-    var getVideoURL = function () {
-      return task.then(() => {
-        return ref.getDownloadURL()
-          .then(url => Promise.resolve(url))
+    const thumbRef = firebase.storage()
+      .ref('channel')
+      .child('images')
+      .child(randomKey);
+
+    const thumbTask = thumbRef.put(payload.thumb);
+
+    const orgRef = firebase.firestore().collection("organizations");
+
+    var getThumbURL = new Promise(function (resolve, reject) {
+      thumbTask.then(() => {
+        thumbRef.getDownloadURL()
+          .then(url => resolve(url))
           .catch(e => console.log(e))
       });
-    }
+    });
 
-    getVideoURL().then(url => {
-      console.log('this is url', url);
+
+    var getVideoURL = new Promise(function (resolve, reject) {
+      task.then(() => {
+        ref.getDownloadURL()
+          .then(url => resolve(url))
+          .catch(e => console.log(e))
+      });
+    });
+
+    var getOrgId = new Promise(function (resolve, reject) {
+      orgRef.where("users", "array-contains", payload.user.uid)
+        .get().then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) { 
+            resolve([doc.id, doc.data()]);
+          })
+        })
+        .catch(e => console.log(e))
+    });
+
+    Promise.all([getThumbURL, getVideoURL, getOrgId]).then(function (urls) {
+      console.log('this is url', urls);
+      const currDate = firebase.firestore.Timestamp.fromDate(new Date());
       firebase.firestore().collection('videos').doc(randomKey).set({
+        id: randomKey,
+        orgId: urls[2][0],
+        orgName: urls[2][1].name,
         likes: 0,
-        thumbnail: 'https://i.ytimg.com/vi/Pf6oI0j_zpk/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLAvJvk4k_UNB9nst4pFP-txM1TLZA',
-        title: 'test',
-        videoURL: url,
+        thumbnail: urls[0],
+        title: payload.title,
+        updatedAt: currDate,
+        videoURL: urls[1],
         views: 0
       }).catch(e => console.log(e));
     }).catch(e => console.log(e));

@@ -16,6 +16,7 @@
       <v-toolbar-side-icon @click="drawer = !drawer" />
       <img height="30" width="30" src="../assets/bc.png" />
       <v-spacer />
+      <span v-if='user'>Hello, {{ user.displayName || ''}}</span>
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>person_outline</v-icon>
       </v-btn>
@@ -27,21 +28,31 @@
     </v-content>
     <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
       <v-list>
-        <v-list-tile @click="onLogout">
+        <v-list-tile v-if="!user" @click="onSignin">
+          <v-list-tile-action>
+            <v-icon light>subject</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>Sign In</v-list-tile-title>
+        </v-list-tile>
+        <v-list-tile v-else @click="onLogout">
           <v-list-tile-action>
             <v-icon light>exit_to_app</v-icon>
           </v-list-tile-action>
-          <v-list-tile-title>Sign Out</v-list-tile-title>
+          <v-list-tile-title> Sign Out</v-list-tile-title>
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-footer :fixed="fixed" app absolute>
+      <v-layout class="flex justify-center grow">
       <span>&copy; BetaChannel 2019</span>
+      </v-layout>
     </v-footer>
   </v-app>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   data() {
     return {
@@ -66,10 +77,20 @@ export default {
       title: "bc"
     };
   },
+  computed: {
+    ...mapGetters({
+        user: "getCurrentUser"
+    })
+  },
   methods: {
+    onSignin() {
+      this.$router.push("/admin/auth");
+    },
     onLogout() {
+      this.user = null;
       this.$store.dispatch("logout");
       this.$router.push("/admin/auth");
+      window.location.reload(true);
     }
   }
 };

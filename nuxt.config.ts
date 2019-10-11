@@ -68,6 +68,12 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+    hotMiddleware: {
+      client: {
+        overlay: false
+      }
+    },
+    friendlyErrors: false,
     extend(config, ctx) {
     }
   },

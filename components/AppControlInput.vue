@@ -1,5 +1,5 @@
 <template>
-  <div class="input-control">
+  <div class="input-control" v-bind:class="{ emailformat: name == 'email' && login == false }">
     <label>
       <slot />
     </label>
@@ -22,6 +22,14 @@
 export default {
   name: "AppControlInput",
   props: {
+    login: {
+      type: Boolean,
+      default: true
+    },
+    name: {
+      type: String,
+      default: ""
+    },
     controlType: {
       type: String,
       default: "input"
@@ -58,5 +66,14 @@ export default {
 .input-control textarea:focus {
   background-color: #eee;
   outline: none;
+}
+
+.emailformat {
+  width: 50% !important;
+  display: inline-block;
+}
+
+.emailformat > input{
+  text-align: right;
 }
 </style>

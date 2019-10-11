@@ -1,21 +1,28 @@
-import axios from 'axios'
+// import axios from 'axios'
 import Cookie from "js-cookie";
 import firebase from '~/plugins/firebase';
-const $axios = axios.create();
+// const $axios = axios.create();
 
 export const strict = false;
 
 export const state = () => ({
     loadedVideos: [],
-    token: null
+    token: null,
+    user: null
 })
 
 export const mutations = {
+    setUser(state, user) {
+        state.user = user;
+    },
     setVideos(state, videos) {
         state.loadedVideos = videos
     },
     setToken(state, token) {
         state.token = token
+    },
+    clearUser(state) {
+        state.currentUser = null
     },
     clearToken(state) {
         state.token = null
@@ -23,51 +30,83 @@ export const mutations = {
 };
 
 export const actions = {
-    nuxtServerInit(vuexContext) {
-        const videosQuery = firebase.firestore().collection('videos').get();
-        return videosQuery.then(res => {
-            const videos = res.docs.map(doc => doc.data());
-            vuexContext.commit('setVideos', videos)
-        }).catch(e => {
-            console.log(e)
-        })
-    },
-
-    setVideos(vuexContext, videos) {
-        vuexContext.commit('setVideos', videos);
-    },
-
-    authenticateUser(vuexContext, authData) {
-        let authUrl =
-            "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" +
-            process.env.fbAPIKey;
-        if (!authData.isLogin) {
-            authUrl =
-                "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" +
-                process.env.fbAPIKey;
-        }
-        return $axios
-            .post(authUrl, {
-                email: authData.email,
-                password: authData.password,
-                returnSecureToken: true
+        nuxtServerInit(vuexContext) {
+            const videosQuery = firebase.firestore().collection('videos').get();
+            return videosQuery.then(res => {
+                const videos = res.docs.map(doc => doc.data());
+                vuexContext.commit('setVideos', videos)
+            }).catch(e => {
+                console.log(e)
             })
-            .then(result => {
-                vuexContext.commit("setToken", result.idToken);
-                localStorage.setItem("token", result.idToken);
-                localStorage.setItem(
-                    "tokenExpiration",
-                    new Date().getTime() + String(Number.parseInt(result.expiresIn) * 1000)
-                );
-                Cookie.set("jwt", result.idToken);
-                Cookie.set(
-                    "expirationDate",
-                    new Date().getTime() + String(Number.parseInt(result.expiresIn) * 1000)
-                );
-            })
-            .catch(e => console.log(e));
-    },
+        },
 
+        setVideos(vuexContext, videos) {
+            vuexContext.commit('setVideos', videos);
+        },
+
+        registerUser(vuexContext, authData) {
+            firebase.auth().createUserWithEmailAndPassword(
+                    authData.email,
+                    authData.password).then(() => {
+                    const user = firebase.auth().currentUser;
+                    vuexContext.commit('setUser', user);
+                    window.localStorage.setItem('org', authData.org);
+                    const actionCodeSettings = {
+                        url: 'http://localhost:3000/upload',
+                        handleCodeInApp: true
+                    };
+                    user.sendEmailVerification(actionCodeSettings).then(function () {
+                        // Email sent.
+                    }).catch(function (error) {
+                        // An error happened.
+                        console.log('email verification err:', error);
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        signinUser(vuexContext, authData) {
+            firebase.auth().signInWithEmailAndPassword(authData.email, authData.password).then((result) => {
+                    console.log(result);
+                    const user = firebase.auth().currentUser;
+                    vuexContext.commit('setUser', user);
+                    if (user.emailVerified && !user.displayName) {
+                        const org = window.localStorage.getItem('org');
+                        user.updateProfile({
+                            displayName: org
+                        }).catch((e) => {
+                            console.log('error when adding org to user', e);
+                        })
+                        firebase.firestore().collection('organizations')
+                            .add({
+                                logoUrl: '',
+                                name: org,
+                                users: [user.uid]
+                            }).then(function (docRef) {
+                                console.log("Org created with ID: ", docRef.id);
+                            }).catch(function (error) {
+                                console.error("Error creating org: ", error);
+                            });
+                        window.localStorage.removeItem('org');
+                    }
+                    user.getIdTokenResult().then(function(res) {
+                        console.log(res);
+                        vuexContext.commit("setToken", res.token);
+                        localStorage.setItem("token", res.token);
+                        localStorage.setItem(
+                            "tokenExpiration",
+                            new Date().getTime() + String(Number.parseInt(res.expirationTime) * 10000)
+                        );
+
+                        Cookie.set("jwt", res.token);
+                        Cookie.set(
+                            "expirationDate",
+                            new Date().getTime() + String(Number.parseInt(res.expirationTime) * 10000)
+                        );
+                    });
+                }).catch(e => console.log('error in signing in', e.message));
+    },
     initAuth(vuexContext, req) {
         let token;
         let expirationDate;
@@ -98,13 +137,16 @@ export const actions = {
         vuexContext.commit("setToken", token);
     },
     logout(vuexContext) {
-        vuexContext.commit("clearToken");
-        Cookie.remove("jwt");
-        Cookie.remove("expirationDate");
-        if (process.client) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("tokenExpiration");
-        }
+        firebase.auth().signOut().then(function () {
+            vuexContext.commit("clearToken");
+            vuexContext.commit("clearUser");
+            Cookie.remove("jwt");
+            Cookie.remove("expirationDate");
+            if (process.client) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("tokenExpiration");
+            }
+        });
     }
 };
 
@@ -114,5 +156,9 @@ export const getters = {
     },
     isAuthenticated(state) {
         return state.token != null;
+    },
+    getCurrentUser(state) {
+        return state.user;
     }
+
 }

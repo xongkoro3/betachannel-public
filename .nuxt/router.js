@@ -2,9 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import { interopDefault } from './utils'
 
-const _5b67f87e = () => interopDefault(import('../pages/upload.vue' /* webpackChunkName: "pages/upload" */))
-const _6977e0b0 = () => interopDefault(import('../pages/admin/auth/index.vue' /* webpackChunkName: "pages/admin/auth/index" */))
-const _2e0ee165 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
+const _38274f98 = () => interopDefault(import('../pages/confirm.vue' /* webpackChunkName: "pages/confirm" */))
+const _b4e32486 = () => interopDefault(import('../pages/upload.vue' /* webpackChunkName: "pages/upload" */))
+const _47e44227 = () => interopDefault(import('../pages/admin/auth/index.vue' /* webpackChunkName: "pages/admin/auth/index" */))
+const _38b54846 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
 
 Vue.use(Router)
 
@@ -81,16 +82,20 @@ export function createRouter() {
     scrollBehavior,
 
     routes: [{
+      path: "/confirm",
+      component: _38274f98,
+      name: "confirm"
+    }, {
       path: "/upload",
-      component: _5b67f87e,
+      component: _b4e32486,
       name: "upload"
     }, {
       path: "/admin/auth",
-      component: _6977e0b0,
+      component: _47e44227,
       name: "admin-auth"
     }, {
       path: "/",
-      component: _2e0ee165,
+      component: _38b54846,
       name: "index"
     }],
 

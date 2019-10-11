@@ -44,7 +44,7 @@
     </div>
 
     <div :key="channel" v-for="channel in channels" class="video-list-wrapper full no-scrollbar">
-      <span>{{ channel }}</span>
+      <span style="margin-right:-100px !important;">{{ channel }}</span>
       <template v-for="(video, index) in otherVids">
         <div :key="video.id" v-if="video.orgName == channel" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
@@ -210,8 +210,9 @@ circle {
 
   overflow-x: scroll;
   scroll-snap-type: x proximity;
-  padding-bottom: calc(0.75 * var(--gutter));
+  padding-bottom: calc(0.55 * var(--gutter));
   margin-bottom: calc(-0.25 * var(--gutter));
+  -webkit-overflow-scrolling: touch;
 }
 
 .video-list:before,

@@ -43,7 +43,9 @@
       </v-list>
     </v-navigation-drawer>
     <v-footer :fixed="fixed" app absolute>
+      <v-layout class="flex justify-center grow">
       <span>&copy; BetaChannel 2019</span>
+      </v-layout>
     </v-footer>
   </v-app>
 </template>
@@ -85,8 +87,10 @@ export default {
       this.$router.push("/admin/auth");
     },
     onLogout() {
+      this.user = null;
       this.$store.dispatch("logout");
       this.$router.push("/admin/auth");
+      window.location.reload(true);
     }
   }
 };

@@ -31,7 +31,7 @@
           </div>
           <div class="thumbnail-info">
             <h3>{{video.title}}</h3>
-            <p>{{video.creator}}</p>
+            <p>{{video.updatedAt}}</p>
             <p class="thumbnail-views">{{video.views}} Views</p>
           </div>
         </div>
@@ -46,7 +46,7 @@
     <div :key="channel" v-for="channel in channels" class="video-list-wrapper full no-scrollbar">
       <span>{{ channel }}</span>
       <template v-for="(video, index) in otherVids">
-        <div :key="video.id" v-if="video.orgId == channel" class="thumbnail">
+        <div :key="video.id" v-if="video.orgName == channel" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
             <div v-if="activeOthrVideo(index)">
               <video
@@ -68,7 +68,7 @@
           </div>
           <div class="thumbnail-info">
             <h3>{{video.title}}</h3>
-            <p>{{video.creator}}</p>
+            <p>{{ }}</p>
             <p class="thumbnail-views">{{video.views}} Views</p>
           </div>
         </div>
@@ -151,8 +151,10 @@ export default {
     channels: function() {
       const channels = [];
       this.otherVids.forEach(element => {
-        if (!channels.includes(element.orgId)) {
-          channels.push(element.orgId);
+        console.log(typeof (element.updatedAt.seconds))
+        // element.updatedAt = new Date(element.updatedAt.nanoseconds).toLocaleString();
+        if (!channels.includes(element.orgName)) {
+          channels.push(element.orgName);
         }
       });
       return channels;

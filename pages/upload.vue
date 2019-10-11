@@ -105,7 +105,7 @@ import { mapGetters } from "vuex";
 import firebase from "~/plugins/firebase";
 
 export default {
-  middleware: ["check-auth", "auth"],
+  middleware: ["auth"],
   data() {
     return {
       uploadedFiles: [],
@@ -129,6 +129,9 @@ export default {
     },
     isFailed() {
       return this.state === firebase.storage.TaskState.ERROR;
+    },
+    currentUser() {
+      return this.$store.getters.getCurrentUser;
     }
   },
   methods: {
@@ -141,7 +144,7 @@ export default {
     },
     save(file, metadata) {
       this.$store.dispatch("upload/uploadVideo", {
-        channelId: "test", //TODO
+        user: this.currentUser,
         title: this.title,
         thumb: this.thumb,
         file,
@@ -151,6 +154,9 @@ export default {
     setThumb(file) {
       this.thumb = file
     }
+  },
+  mounted() {
+    console.log(this.currentUser);
   }
 };
 </script>

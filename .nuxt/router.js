@@ -2,10 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import { interopDefault } from './utils'
 
-const _38274f98 = () => interopDefault(import('../pages/confirm.vue' /* webpackChunkName: "pages/confirm" */))
-const _b4e32486 = () => interopDefault(import('../pages/upload.vue' /* webpackChunkName: "pages/upload" */))
-const _47e44227 = () => interopDefault(import('../pages/admin/auth/index.vue' /* webpackChunkName: "pages/admin/auth/index" */))
-const _38b54846 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
+const _2d77b4da = () => interopDefault(import('../pages/confirm.vue' /* webpackChunkName: "pages/confirm" */))
+const _5b67f87e = () => interopDefault(import('../pages/upload.vue' /* webpackChunkName: "pages/upload" */))
+const _6977e0b0 = () => interopDefault(import('../pages/admin/auth/index.vue' /* webpackChunkName: "pages/admin/auth/index" */))
+const _2ba20500 = () => interopDefault(import('../pages/videos/_id.vue' /* webpackChunkName: "pages/videos/_id" */))
+const _2e0ee165 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
 
 Vue.use(Router)
 
@@ -83,19 +84,23 @@ export function createRouter() {
 
     routes: [{
       path: "/confirm",
-      component: _38274f98,
+      component: _2d77b4da,
       name: "confirm"
     }, {
       path: "/upload",
-      component: _b4e32486,
+      component: _5b67f87e,
       name: "upload"
     }, {
       path: "/admin/auth",
-      component: _47e44227,
+      component: _6977e0b0,
       name: "admin-auth"
     }, {
+      path: "/videos/:id?",
+      component: _2ba20500,
+      name: "videos-id"
+    }, {
       path: "/",
-      component: _38b54846,
+      component: _2e0ee165,
       name: "index"
     }],
 

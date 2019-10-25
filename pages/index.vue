@@ -11,9 +11,6 @@
      https://firebase.google.com/docs/web/setup#config-web-app -->
 
 <script>
-</script>
-
-<script>
 import VideoPlayer from "~/components/VideoPlayer.vue";
 
 export default {

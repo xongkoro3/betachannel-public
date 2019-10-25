@@ -86,12 +86,6 @@ export default {
       activeOthrVideos: []
     };
   },
-  props: {
-    videos: {
-      type: Array,
-      required: true
-    }
-  },
   methods: {
     activeVideo(index) {
       return this.activeVideos[index];
@@ -122,6 +116,9 @@ export default {
     console.log("h: ", this.otherVids);
   },
   computed: {
+    videos() {
+      return this.$store.getters.loadedVideos;
+    },
     sponsoredVids: function() {
       const vids = this.videos.filter(function(vid) {
         return vid.orgId === "betachannel";

@@ -96,7 +96,7 @@ export default {
     chooseVideo(e, index) {
       this.activeVideos = new Array(this.videos.length).fill(false);
       this.activeVideos[index] = !this.activeVideos[index];
-      console.log("s[index]", this.sponsoredVids[index]);
+      this.$router.push({ path: '/', query: { id: index } });
     },
     chooseOthrVideo(e, index) {
       this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
@@ -114,6 +114,8 @@ export default {
     this.activeVideos = new Array(this.videos.length).fill(false);
     this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
     console.log("h: ", this.otherVids);
+    this.chooseVideo(null, parseInt(this.$route.params.id));
+    // console.log("this is the route: ", this.$route);
   },
   computed: {
     videos() {

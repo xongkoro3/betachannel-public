@@ -96,11 +96,19 @@ export default {
     chooseVideo(e, index) {
       this.activeVideos = new Array(this.videos.length).fill(false);
       this.activeVideos[index] = !this.activeVideos[index];
-      this.$router.push({ path: '/', query: { id: index } });
+      console.log('test', this.sponsoredVids[index]);
+      const currID = this.sponsoredVids[index].id;
+      if (e != null) {
+        this.$router.push({ path: '/videos/', query: { currID } });
+      }
     },
     chooseOthrVideo(e, index) {
       this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
       this.activeOthrVideos[index] = !this.activeOthrVideos[index];
+      const currID = this.otherVids[index].id;
+      if (e != null) {
+        this.$router.push({ path: '/videos/' + currID });
+      }
     },
     addLike() {
       this.currVid.likes += 1;
@@ -108,13 +116,32 @@ export default {
     backArrow(e) {
       console.log(e);
       alert("clicked");
+    },
+    findWithAttr(array, attr, value) {
+      for (let i = 0; i < array.length; i++) {
+        if (array[i][attr] === value) {
+            return i;
+        }
+      }
+      return -1;
     }
   },
   mounted() {
     this.activeVideos = new Array(this.videos.length).fill(false);
     this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
-    console.log("h: ", this.otherVids);
-    this.chooseVideo(null, parseInt(this.$route.params.id));
+
+    const IdxAtOthr = this.findWithAttr(this.otherVids, 'id', this.$route.params.id);
+    const IdxAtSponsored = this.findWithAttr(this.sponsoredVids, 'id', this.$route.params.id);
+
+    console.log('param id', this.$route.params);
+    console.log('IdxAtOthr', IdxAtOthr);
+
+    if (IdxAtOthr >= 0) {
+      this.chooseOthrVideo(null, IdxAtOthr);
+    }
+    if (IdxAtSponsored >= 0) {
+      this.chooseVideo(null, IdxAtSponsored);
+    }
     // console.log("this is the route: ", this.$route);
   },
   computed: {

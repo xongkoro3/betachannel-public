@@ -8,12 +8,16 @@ export const strict = false;
 export const state = () => ({
     loadedVideos: [],
     token: null,
-    user: null
+    user: null,
+    org: null
 })
 
 export const mutations = {
     setUser(state, user) {
         state.user = user;
+    },
+    setOrg(state, org) {
+        state.org = org;
     },
     setVideos(state, videos) {
         state.loadedVideos = videos
@@ -147,6 +151,22 @@ export const actions = {
                 localStorage.removeItem("tokenExpiration");
             }
         });
+    },
+    updateButton(vuexContext, buttonData) {
+        firebase.firestore()
+            .collection('organizations')
+            .where("users", "array-contains", buttonData.uid)
+            .get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    firebase.firestore()
+                            .collection('organizations')
+                            .doc(doc.id)
+                            .set({
+                                button: buttonData
+                            }, { merge: true })
+                })
+            })
     }
 };
 

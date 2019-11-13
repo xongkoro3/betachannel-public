@@ -68,7 +68,7 @@ export default {
             color: this.color
           })
           .then(() => {
-            // this.$router.push("/upload");
+            this.$router.push("/videos");
           });
       },
       reset() {

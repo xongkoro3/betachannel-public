@@ -69,7 +69,7 @@ export default {
         {
           icon: "apps",
           title: "Welcome",
-          to: "/"
+          to: "/videos"
         },
         {
           icon: "bubble_chart",

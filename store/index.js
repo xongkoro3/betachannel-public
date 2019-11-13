@@ -9,7 +9,14 @@ export const state = () => ({
     loadedVideos: [],
     token: null,
     user: null,
-    org: null
+    org: {
+        name: "notre dame",
+        button: {
+            color: "green",
+            link: "https://ideacenter.nd.edu/",
+            text: "Hello World"
+        }
+    }
 })
 
 export const mutations = {
@@ -159,6 +166,7 @@ export const actions = {
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
+                    vuexContext.commit('setOrg', doc.data());
                     firebase.firestore()
                             .collection('organizations')
                             .doc(doc.id)
@@ -179,6 +187,8 @@ export const getters = {
     },
     getCurrentUser(state) {
         return state.user;
+    },
+    getCurrentOrg(state) {
+        return state.org;
     }
-
 }

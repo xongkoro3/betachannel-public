@@ -44,7 +44,18 @@
     </div>
 
     <div :key="channel" v-for="channel in channels" class="video-list-wrapper full no-scrollbar">
-      <span class="orgTitle">{{ channel }}</span>
+       <v-row class="pa-md-8 mx-lg-auto" align="center">
+      <span class="">
+        {{ channel }}
+        <v-btn
+          :color="org.button.color"
+          class=""
+          :href="org.button.link"
+          v-if="channel == org.name"
+        >{{ org.button.text }}</v-btn>
+      </span>
+       </v-row>
+      <div class="video-list-wrapper full no-scrollbar">
       <template v-for="(video, index) in otherVids">
         <div :key="video.id" v-if="video.orgName == channel" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
@@ -73,11 +84,14 @@
           </div>
         </div>
       </template>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "VideoPlayer",
   data: function() {
@@ -127,6 +141,7 @@ export default {
     }
   },
   mounted() {
+    console.log('orgggg: ', this.org)
     this.activeVideos = new Array(this.videos.length).fill(false);
     this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
 
@@ -184,7 +199,10 @@ export default {
         }
       });
       return channels;
-    }
+    },
+    ...mapGetters({
+        org: "getCurrentOrg"
+    })
   }
 };
 </script>

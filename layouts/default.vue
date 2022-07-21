@@ -40,10 +40,18 @@
           </v-list-tile-action>
           <v-list-tile-title> Sign Out</v-list-tile-title>
         </v-list-tile>
+        <v-list-tile @click="onSettings">
+          <v-list-tile-action>
+            <v-icon light>subject</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>Settings</v-list-tile-title>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-footer :fixed="fixed" app absolute>
+      <v-layout class="flex justify-center grow">
       <span>&copy; BetaChannel 2019</span>
+      </v-layout>
     </v-footer>
   </v-app>
 </template>
@@ -61,7 +69,7 @@ export default {
         {
           icon: "apps",
           title: "Welcome",
-          to: "/"
+          to: "/videos"
         },
         {
           icon: "bubble_chart",
@@ -85,8 +93,13 @@ export default {
       this.$router.push("/admin/auth");
     },
     onLogout() {
+      this.user = null;
       this.$store.dispatch("logout");
       this.$router.push("/admin/auth");
+      window.location.reload(true);
+    },
+    onSettings() {
+      this.$router.push("/profile");
     }
   }
 };

@@ -44,7 +44,18 @@
     </div>
 
     <div :key="channel" v-for="channel in channels" class="video-list-wrapper full no-scrollbar">
-      <span class="orgTitle">{{ channel }}</span>
+       <v-row class="pa-md-8 mx-lg-auto" align="center">
+      <span class="">
+        {{ channel }}
+        <v-btn
+          :color="org.button.color"
+          class=""
+          :href="org.button.link"
+          v-if="channel == org.name"
+        >{{ org.button.text }}</v-btn>
+      </span>
+       </v-row>
+      <div class="video-list-wrapper full no-scrollbar">
       <template v-for="(video, index) in otherVids">
         <div :key="video.id" v-if="video.orgName == channel" class="thumbnail">
           <div class="video-wrapper" @click="chooseOthrVideo($event, index)">
@@ -73,11 +84,14 @@
           </div>
         </div>
       </template>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "VideoPlayer",
   data: function() {
@@ -85,12 +99,6 @@ export default {
       activeVideos: [],
       activeOthrVideos: []
     };
-  },
-  props: {
-    videos: {
-      type: Array,
-      required: true
-    }
   },
   methods: {
     activeVideo(index) {
@@ -102,11 +110,19 @@ export default {
     chooseVideo(e, index) {
       this.activeVideos = new Array(this.videos.length).fill(false);
       this.activeVideos[index] = !this.activeVideos[index];
-      console.log("s[index]", this.sponsoredVids[index]);
+      console.log('test', this.sponsoredVids[index]);
+      const currID = this.sponsoredVids[index].id;
+      if (e != null) {
+        this.$router.push({ path: '/videos/', query: { currID } });
+      }
     },
     chooseOthrVideo(e, index) {
       this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
       this.activeOthrVideos[index] = !this.activeOthrVideos[index];
+      const currID = this.otherVids[index].id;
+      if (e != null) {
+        this.$router.push({ path: '/videos/' + currID });
+      }
     },
     addLike() {
       this.currVid.likes += 1;
@@ -114,14 +130,39 @@ export default {
     backArrow(e) {
       console.log(e);
       alert("clicked");
+    },
+    findWithAttr(array, attr, value) {
+      for (let i = 0; i < array.length; i++) {
+        if (array[i][attr] === value) {
+            return i;
+        }
+      }
+      return -1;
     }
   },
   mounted() {
+    console.log('orgggg: ', this.org)
     this.activeVideos = new Array(this.videos.length).fill(false);
     this.activeOthrVideos = new Array(this.otherVids.length).fill(false);
-    console.log("h: ", this.otherVids);
+
+    const IdxAtOthr = this.findWithAttr(this.otherVids, 'id', this.$route.params.id);
+    const IdxAtSponsored = this.findWithAttr(this.sponsoredVids, 'id', this.$route.params.id);
+
+    console.log('param id', this.$route.params);
+    console.log('IdxAtOthr', IdxAtOthr);
+
+    if (IdxAtOthr >= 0) {
+      this.chooseOthrVideo(null, IdxAtOthr);
+    }
+    if (IdxAtSponsored >= 0) {
+      this.chooseVideo(null, IdxAtSponsored);
+    }
+    // console.log("this is the route: ", this.$route);
   },
   computed: {
+    videos() {
+      return this.$store.getters.loadedVideos;
+    },
     sponsoredVids: function() {
       const vids = this.videos.filter(function(vid) {
         return vid.orgId === "betachannel";
@@ -158,7 +199,10 @@ export default {
         }
       });
       return channels;
-    }
+    },
+    ...mapGetters({
+        org: "getCurrentOrg"
+    })
   }
 };
 </script>

@@ -3,8 +3,10 @@ import Router from 'vue-router'
 import { interopDefault } from './utils'
 
 const _2d77b4da = () => interopDefault(import('../pages/confirm.vue' /* webpackChunkName: "pages/confirm" */))
+const _4157a808 = () => interopDefault(import('../pages/profile.vue' /* webpackChunkName: "pages/profile" */))
 const _5b67f87e = () => interopDefault(import('../pages/upload.vue' /* webpackChunkName: "pages/upload" */))
 const _6977e0b0 = () => interopDefault(import('../pages/admin/auth/index.vue' /* webpackChunkName: "pages/admin/auth/index" */))
+const _2ba20500 = () => interopDefault(import('../pages/videos/_id.vue' /* webpackChunkName: "pages/videos/_id" */))
 const _2e0ee165 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
 
 Vue.use(Router)
@@ -86,6 +88,10 @@ export function createRouter() {
       component: _2d77b4da,
       name: "confirm"
     }, {
+      path: "/profile",
+      component: _4157a808,
+      name: "profile"
+    }, {
       path: "/upload",
       component: _5b67f87e,
       name: "upload"
@@ -93,6 +99,10 @@ export function createRouter() {
       path: "/admin/auth",
       component: _6977e0b0,
       name: "admin-auth"
+    }, {
+      path: "/videos/:id?",
+      component: _2ba20500,
+      name: "videos-id"
     }, {
       path: "/",
       component: _2e0ee165,
